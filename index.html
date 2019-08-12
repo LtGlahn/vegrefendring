@@ -97,7 +97,7 @@ Vegstatus:
   <input id="meter" type="number" name="quantity" min="0" max="99999" value="0">
 </p>
 <p>
-    <button class="myButton" onClick="hentVegreferanser('knappeklikk')" >Hent denne vegreferansen</button> 
+    <button class="myButton" onClick="hentVegreferanser('knappeklikk')" >Hent denne vegreferansen</button> <input type="checkbox" id="hentdagens"> Vis også dagens vegreferanse
 </p>  
 
 <!-- </form> -->
@@ -224,6 +224,11 @@ function hentVegreferanser(hvaslags) {
         '&kommune='+kommune + '&kat=' + vegkat + '&stat=' + vegstatus + 
         '&vegnr=' + vegnr + '&hp=' + hp + '&meter=' + meter + '&dato=' + dato + '&fjerndubletter=true';
     
+    if (document.getElementById("hentdagens").checked == true ){
+        vegrefApi = vegrefApi.concat( "&hentdagensverdi=true"  ) ; 
+    }
+    
+    
     console.log(vegrefApi); 
     var xhr = new XMLHttpRequest();
     xhr.open("GET", vegrefApi, true);
@@ -279,15 +284,25 @@ function hentVegreferanser(hvaslags) {
                     var y = Math.round( coords[1] * 100 ) / 100; 
 
                     // Legger resultatene i tabell 
-                    // Lag table header 
+                    // Lag table header. En ekstra kolonne hvis vi skal ha med dagens vegreferanse-verdier
+                    var thTekst = "<thead>" + 
+                                    "<tr><th><em>Nummer</em></th>" + 
+                                  "<th><em>Gyldig fra</em></th>" + 
+                                  "<th><em>Gyldig til</em></th>"  + 
+                                  "<th><em>X</em></th>"  + 
+                                  "<th><em>Y</em></th>" ;  //   + 
+                                 // "</tr></thead><tbody></tbody>"
+                                 
+                    
+                    if (document.getElementById("hentdagens").checked == true ){
+                        thTekst = thTekst.concat( "<th><em>Dagens v.ref</em></th> </tr></thead><tbody></tbody>" ) ; 
+                    } else {
+                       thTekst = thTekst.concat( "</tr></thead><tbody></tbody>" ) ; 
+                    }
+                    
+                    
                     if ($("#vegreferanseTabell tbody").length == 0) {
-                      $("#vegreferanseTabell").append("<thead>" + 
-                      "<tr><th><em>Nummer</em></th>" + 
-                          "<th><em>Gyldig fra</em></th>" + 
-                          "<th><em>Gyldig til</em></th>"  + 
-                          "<th><em>X</em></th>"  + 
-                          "<th><em>Y</em></th>"  + 
-                      "</tr></thead><tbody></tbody>");
+                      $("#vegreferanseTabell").append(thTekst );
                     }
 
 
@@ -304,10 +319,16 @@ function hentVegreferanser(hvaslags) {
                         "<td>" + props['fradato'] + "</td>" +
                         "<td>" + props['tildato'] + "</td>" +
                         "<td>" + tekstX + "</td>" +
-                        "<td>" + tekstY + "</td>" +
-                        
-                      "</tr>"; 
+                        "<td>" + tekstY + "</td>" ; 
+
+                    if (document.getElementById("hentdagens").checked == true ){
+                        myTableRow = myTableRow.concat( "<td>" + props['dagensvegref']  + "</td>  </tr>"  ) ; 
+                    } else {
+                       myTableRow = myTableRow.concat( "</tr>" ) ; 
+                    }
                     $("#vegreferanseTabell tbody").append(myTableRow);
+
+                    // console.log( myTableRow) 
 
                     // Unngår å modifisere det elementet vi itererer over. I stedet kopierer vi 
                     // over til tempGeo, med eller uten endringer 
