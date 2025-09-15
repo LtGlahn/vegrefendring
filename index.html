@@ -171,8 +171,8 @@ function hentvegsystemref( props) {
     // knappen "Hent denne vegreferansen", men det kan også tweakes til et hvilket som helst div-element. 
     var vrefid = 'vsysref'.concat( props['visningsnummer'] ) 
     
-    // var veglenkeApi = "https://www.vegvesen.no/nvdb/api/v2/veg.json?veglenke=" + 
-    var veglenkeApi = "https://nvdbapiles-v3.atlas.vegvesen.no/veg.json?veglenkesekvens=" + 
+    // var veglenkeApi = "https://nvdbapiles.atlas.vegvesen.no?veglenke=" + 
+    var veglenkeApi = "https://nvdbapiles.atlas.vegvesen.no/veg.json?veglenkesekvens=" + 
                                 props['veglenkeposisjon'] + '@' + props['veglenkeid'] ; 
     
     var xhr2 = new XMLHttpRequest();
